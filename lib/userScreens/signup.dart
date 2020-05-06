@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_delivery/tools/app_tools.dart';
-
 class SignUp extends StatefulWidget {
   @override
   _SignUpState createState() => _SignUpState();
@@ -14,6 +13,8 @@ class _SignUpState extends State<SignUp> {
   TextEditingController re_password = new TextEditingController();
   final scaffoldKey = new GlobalKey<ScaffoldState>();
   BuildContext context;
+  //AppMethods appMethod = new FirebaseMethods();
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +92,7 @@ class _SignUpState extends State<SignUp> {
         )
     );
   }
-  verifyDetails(){
+  verifyDetails()  {
     if (fullname.text == ""){
       showSnackbar("Напишите Имя и Фамилию", scaffoldKey);
       return;
@@ -116,6 +117,21 @@ class _SignUpState extends State<SignUp> {
       showSnackbar("Пароли несовместимы", scaffoldKey);
       return;
     }
-    displayProgressDialog(context);
+    /*displayProgressDialog(context);
+    String response =
+    await appMethod.createUserAccount(fullname: fullname.text,
+        phone: phoneNumber.text,
+        email:email.text.toLowerCase(),
+        password:password.text.toLowerCase());
+
+    if (response == successful){
+      closeProgressDialog(context);
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+    }
+    else {
+      closeProgressDialog(context);
+      showSnackbar(response,scaffoldKey);
+    }*/
   }
 }

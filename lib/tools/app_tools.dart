@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grocery_delivery/tools/progressdialog.dart';
+//import 'package:grocery_delivery/tools/progressdialog.dart';
 
 Widget appTextField(
     {IconData textIcon,
@@ -8,7 +8,7 @@ Widget appTextField(
       double sidePadding,
       TextInputType textType,
       TextEditingController controller}){
-  sidePadding == null ? sidePadding = 0.0 : sidePadding;
+  sidePadding == null ? sidePadding = 0.0 :sidePadding;
   textHint == null ? textHint = "" : textHint;
   //textType == null ? textType == TextInputType.text : textType;
   return Padding(
@@ -66,15 +66,4 @@ showSnackbar (String message, final scaffoldKey){
     style: new TextStyle(color: Colors.white),
   ),
   ));
-}
-displayProgressDialog(BuildContext context){
-  Navigator.of(context).push(new PageRouteBuilder(
-      opaque: false,
-      pageBuilder:(BuildContext context, _,__){
-        return new ProgressDialog();
-      }));
-}
-
-closeProgressDialog(BuildContext context){
-  Navigator.of(context).pop();
 }
