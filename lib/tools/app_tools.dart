@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'package:grocery_delivery/tools/progressdialog.dart';
+import 'package:grocery_delivery/tools/progressdialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Widget appTextField(
     {IconData textIcon,
@@ -24,7 +25,6 @@ Widget appTextField(
         keyboardType: textType == null ? TextInputType.text : textType,
         decoration: new InputDecoration(
             border: InputBorder.none,
-
             hintText: textHint,
             prefixIcon:
             textIcon == null ? new Container() : new Icon(textIcon),
@@ -61,9 +61,23 @@ Widget appButton({String btnTxt,double btnPadding, Color btnColor,VoidCallback o
 showSnackbar (String message, final scaffoldKey){
   scaffoldKey.currentState.showSnackBar(new SnackBar(
     backgroundColor: Colors.black,
-  content: new Text(
-    message,
-    style: new TextStyle(color: Colors.white),
-  ),
+    content: new Text(message, style: new TextStyle(color: Colors.white),),
   ));
+}
+
+displayProgressDialog(BuildContext context){
+  Navigator.of(context).push(new PageRouteBuilder(
+    opaque: false,
+    pageBuilder: (BuildContext context, _, __) {
+      return new ProgressDialog();
+    }));
+}
+closeProgressDialog (BuildContext context){
+  Navigator.of(context).pop();
+}
+
+writeDataLocally({String key, String value})async{
+  Future<SharedPreferences> saveLocal = SharedPreferences.getInstance();
+  final SharedPreferences localData = await saveLocal;
+  localData.setString(key, value);
 }
