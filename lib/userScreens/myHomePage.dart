@@ -1,7 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:grocery_delivery/tools/Store.dart';
+import 'package:grocery_delivery/tools/app_data.dart';
+import 'package:grocery_delivery/tools/app_methods.dart';
+import 'package:grocery_delivery/tools/app_tools.dart';
+import 'package:grocery_delivery/tools/firebase_methods.dart';
 import 'package:grocery_delivery/userScreens/notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'favorites.dart';
 import 'messages.dart';
 import 'basket.dart';
@@ -16,8 +22,32 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage> {// with SingleTickerProviderStateMixin
   BuildContext context;
+  String acctName = "";
+  String acctEmail = "";
+  String acctPhotoURL = "";
+  bool isLoggedIn;
+  AppMethods appMethods = new FirebaseMethods();
+  //Future<SharedPreferences> saveLocal = SharedPreferences.getInstance();
+
+  @override
+  void initState(){
+    //TODO: implement initState
+    getCurrentUser();
+    super.initState();
+
+  }
+  Future getCurrentUser()async {
+    acctName = await getStringDataLocally(key: fullName);
+    acctEmail =await  getStringDataLocally(key: userEmail);
+    acctPhotoURL =await  getStringDataLocally(key: photoURL);
+    isLoggedIn =await getBoolDataLocally(key: loggedIN);
+    acctName == null ? acctName="Гостевой пользователь":acctName;
+    acctEmail == null ? acctEmail="guest@gmail.com":acctEmail;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     this.context=context;
@@ -136,8 +166,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         child: new Column(
           children: <Widget>[
             new UserAccountsDrawerHeader(
-                accountName: new Text("Гулзат Уметалиева"),
-                accountEmail: new Text("gulzat.umetalieva@iaau.edu.kg"),
+                accountName: new Text(acctName),
+                accountEmail: new Text(acctEmail),
                 currentAccountPicture: new CircleAvatar(
                     backgroundColor: Colors.white,
                     child: new Icon(Icons.person),
@@ -204,16 +234,23 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               trailing: new CircleAvatar(
                 child: new Icon(Icons.exit_to_app,color: Colors.white,size: 20,),
               ),
-              title: new Text("Логин"),
-              onTap: (){
-                Navigator.of(context).push(new CupertinoPageRoute(builder: (BuildContext context) {
-                  return new GroceryLogin();
-                }));
-              },
+              title: new Text(isLoggedIn == true ? "Выйти":"Логин"),
+              onTap: checkIfLoggedIn,
             ),
           ],
         ),
       )
     );
+  }
+  checkIfLoggedIn()async{
+    if (isLoggedIn == false ){
+      bool response = await Navigator.of(context).push(new CupertinoPageRoute(
+          builder: (BuildContext context)=>new GroceryLogin()));
+      if (response == true)getCurrentUser();
+      return;
+    }
+    bool response = await appMethods.logOutUser();
+    if (response == true)getCurrentUser();
+
   }
 }

@@ -47,8 +47,19 @@ class FirebaseMethods implements AppMethods {
     FirebaseUser user;
     try {
       user = (await auth.signInWithEmailAndPassword(email: email, password: password)).user;
+      if (user!=null){
+        DocumentSnapshot userInfo = await getUserInfo(user.uid);
+        await writeDataLocally(key: userID,value: userInfo[userID]);
+        await writeDataLocally(key: fullName,value: userInfo[fullName]);
+        await writeDataLocally(key: userEmail,value: userInfo[userEmail]);
+        await writeDataLocally(key: phoneNumber,value: userInfo[phoneNumber]);
+        await writeDataLocally(key: photoURL,value: userInfo[photoURL]);
+        await writeBoolDataLocally(key: loggedIN,value: true);
+
+
+
+      }
     } on PlatformException catch (e){
-      print (e.details);
       return errorMSG(e.message);
     }
 
@@ -65,6 +76,24 @@ class FirebaseMethods implements AppMethods {
   }
   Future<String>errorMSG(String e )async{
     return e;
+  }
+
+  @override
+  Future <bool> logOutUser()async {
+    // TODO: implement logOutUser
+    await auth.signOut();
+    await clearDataLocally();
+
+    return complete();
+    //return null;
+  }
+
+  @override
+  Future<DocumentSnapshot> getUserInfo(String userid)async  {
+    // TODO: implement getUserInfo
+    return await firestore.collection(usersData).document(userid).get();
+
+    //return null;
   }
 
 }
