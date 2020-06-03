@@ -269,26 +269,10 @@ class _MyHomePageState extends State<MyHomePage> {// with SingleTickerProviderSt
                 new Container(
                   decoration: new BoxDecoration(
                       image: new DecorationImage(fit: BoxFit.fitWidth,
-                          image:new NetworkImage((productImage))) //inside NetworkImage (storeItems[index].itemImage)
+                          image:new NetworkImage((prodImage[0]))) //inside NetworkImage (storeItems[index].itemImage)
                   ),
                 ),
-                new Container(
-                  //height: 72,
-                  //color: Colors.white.withAlpha(90),
-                  child: Stack(
-                    alignment: FractionalOffset.topLeft,
-                    children: <Widget>[
-                      new Container(
-                        decoration: new BoxDecoration(
-                          //image: new DecorationImage(fit: BoxFit.fitWidth)
-                        ),
-                      ),
-                      new IconButton(icon: Icon(Icons.shopping_cart,color: Colors.lightGreen,),
-                        alignment:Alignment.topLeft,iconSize:20,), //onPressed: (){},
-                    ],
-                  ),
-                ),
-                new Container(
+                (isLoggedIn) ? new Container(
                   height: 88,
                   child: Stack(
                     alignment: FractionalOffset.topLeft,
@@ -300,9 +284,9 @@ class _MyHomePageState extends State<MyHomePage> {// with SingleTickerProviderSt
                         alignment:Alignment.topLeft,iconSize:30,onPressed: (){},),
                     ],
                   ),
-                ),
+                ) : Container(),
 
-                new Container(
+                (isLoggedIn) ? new Container(
                   height: 88,
                   //color: Colors.white.withAlpha(90),
                   child: Stack(
@@ -322,7 +306,7 @@ class _MyHomePageState extends State<MyHomePage> {// with SingleTickerProviderSt
                         },),
                     ],
                   ),
-                ),
+                ) : Container(),
 
                 new Container(
                   height: 50,
