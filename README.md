@@ -4,6 +4,10 @@ A new Flutter application.
 
 ## Getting Started
 
+-Pre-release of an application is located in menu "releases".
+
+-Also its in project code - destination folder is : groceryshopapp/android/app/release/
+
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
