@@ -285,7 +285,7 @@ class _MyHomePageState extends State<MyHomePage> {// with SingleTickerProviderSt
                       ),
                       new IconButton(icon: Icon(Icons.shopping_cart,color: Colors.lightGreen,),
                         alignment:Alignment.topLeft,iconSize:20,), //onPressed: (){},
-                    ],
+    ],
                   ),
                 ),
                 new Container(
