@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:grocery_delivery/tools/app_methods.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grocery_delivery/tools/app_tools.dart';
 import 'app_data.dart';
+
 
 class FirebaseMethods implements AppMethods {
   Firestore firestore = Firestore.instance;
@@ -16,6 +19,15 @@ class FirebaseMethods implements AppMethods {
     try {
       user = (await auth.createUserWithEmailAndPassword(email: email, password: password)).user;
 
+      //
+
+      }on PlatformException catch (e){
+            //print (e.details);
+            return errorMSG(e.message);
+          }
+      try {
+
+      //
       if (user!=null){
         await firestore.collection(usersData).document(user.uid).setData({
           userID : user.uid,
@@ -31,8 +43,8 @@ class FirebaseMethods implements AppMethods {
         writeDataLocally(key: userPassword,value: password);
       }
     } on PlatformException catch (e){
-      print (e.details);
-      return errorMSG(e.details);
+      //print (e.details);
+      return errorMSG(e.message);
     }
 
     return user == null ? errorMSG("Произошла ошибка") : successfulMSG();
@@ -56,7 +68,7 @@ class FirebaseMethods implements AppMethods {
         await writeDataLocally(key: photoURL,value: userInfo[photoURL]);
         await writeBoolDataLocally(key: loggedIN,value: true);
 
-
+        //print(userInfo[userEmail]);
 
       }
     } on PlatformException catch (e){
@@ -85,7 +97,6 @@ class FirebaseMethods implements AppMethods {
     await clearDataLocally();
 
     return complete();
-    //return null;
   }
 
   @override
@@ -95,5 +106,52 @@ class FirebaseMethods implements AppMethods {
 
     //return null;
   }
+
+
+
+
+  //comment
+
+  @override
+  Future<String> addNewProduct({Map newProduct})async {
+    // TODO: implement addNewProduct
+    String documentID;
+    await firestore.collection(appProducts).add(newProduct).then((documentRef){
+      documentID = documentRef.documentID;
+    });
+    return documentID;
+  }
+
+  @override
+  Future<List<String>> uploadProductImage({List<File> imageList, String docID}) async {
+    // TODO: implement uploadProductImage
+    List<String> imageUrl = new List();
+    try{
+      for (int s=0; s<imageList.length; s++){
+        StorageReference storageReference = FirebaseStorage.instance.ref().child(appProducts).child(docID+"$s.jpeg"); //child(docID) it was before last child
+        StorageUploadTask uploadTask = storageReference.putFile(imageList[s]);
+        StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+        String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();// this second instead
+        //Uri downloadUrl = (await uploadTask.future).downloadUrl; // this was first
+        imageUrl.add(downloadUrl.toString());
+      }
+    }on PlatformException catch (e){
+      imageUrl.add(error);
+      print(e.details);
+    }
+    return imageUrl;
+  }
+
+  @override
+  Future<bool> updateProductImage({String docID, List<String> data})async {
+    // TODO: implement updateProductImage
+    bool msg;
+    await firestore.collection(appProducts).document(docID).updateData({productImage: data}).whenComplete((){
+      msg =true;
+    });
+    return msg;
+  }
+
+//comment
 
 }
